@@ -11,7 +11,8 @@ class EventDetection (Subscriber):
         self.dataSender = dataSender
     def update(self, data):
         print ("Going to check event")
-        self.bufferSamples.append(data["power"])
+        # self.bufferSamples.append(data["power"])
+        self.detectEvent(data["power"])
 
     def detectEvent(self, power):
         stateValue = ""

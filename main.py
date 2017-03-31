@@ -16,26 +16,42 @@ def runFlask():
     app.run("0.0.0.0", debug=True, use_reloader=False)
 
 if __name__ == "__main__":
-    powerSamples = []
-    dataProcessingSemaphore = threading.Semaphore(value=0)
     socketControl.initializeRelay()
+    readModule = EdisonRead(socketControl)
+    powerConsumptionModule = EdisonPowerConsumption(socketControl)
+    url1 = "http://common_room-35d864a6c6aedaf32848a1dc00e6c9d962478dc1f6a4925:938cf5ebbbb69ec1ca07098326528ffc9a89db31fdc65454@192.168.10.145:3000/api/json/plugs_events"
+    url2 = "http://common_room-35d864a6c6aedaf32848a1dc00e6c9d962478dc1f6a4925:938cf5ebbbb69ec1ca07098326528ffc9a89db31fdc65454@192.168.10.145:3000/api/json/continuous_measuring"
+    dataSenderModule = DataSender(url1, url2)
+    eventDetectorModule = EventDetection(dataSenderModule)
+    ledControlModule = LedController( 20, 14, 21)
+    powerConsumptionModule.add(ledControlModule)
+    powerConsumptionModule.add(dataSenderModule)
+    powerConsumptionModule.add(eventDetectorModule)
+    while True:
+        samples = readModule.addDAQSample()
+        powerConsumptionModule.getPower(samples)
 
-    flaskThread = threading.Thread(target=runFlask)
 
-    dataAcquisitionThread = DataAcquisitionThread(socketControl, dataProcessingSemaphore, powerSamples)
-    dataProcessingThread = DataProcessingThread(socketControl,dataProcessingSemaphore,powerSamples)
-
-    threads = [flaskThread, dataAcquisitionThread, dataProcessingThread]
-
-    # Starts the threads
-    flaskThread.start()  # Starts the webserver
-
-    dataProcessingThread.start()
-    dataAcquisitionThread.start()
-
-    # Waits fr all threads to finish
-    for t in threads:
-        t.join()
+    # powerSamples = []
+    # dataProcessingSemaphore = threading.Semaphore(value=0)
+    # socketControl.initializeRelay()
+    #
+    # flaskThread = threading.Thread(target=runFlask)
+    #
+    # dataAcquisitionThread = DataAcquisitionThread(socketControl, dataProcessingSemaphore, powerSamples)
+    # dataProcessingThread = DataProcessingThread(socketControl,dataProcessingSemaphore,powerSamples)
+    #
+    # threads = [flaskThread, dataAcquisitionThread, dataProcessingThread]
+    #
+    # # Starts the threads
+    # flaskThread.start()  # Starts the webserver
+    #
+    # dataProcessingThread.start()
+    # dataAcquisitionThread.start()
+    #
+    # # Waits fr all threads to finish
+    # for t in threads:
+    #     t.join()
 
     # samplesQueue = []
     # samplesQueueSemaphore = threading.Semaphore(value=60)

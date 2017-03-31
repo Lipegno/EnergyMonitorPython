@@ -119,12 +119,12 @@ class LedController(Subscriber):
                 self.pastState = self.CONST_STATE_GREEN
 
     def update(self,data):
-        #print("LED receive power")
-        self.powerBuffer.append(data['power'])
-        self.ledSemaphoreController.release()
+        print("LED receive power")
+        # self.powerBuffer.append(data['power'])
+        # self.ledSemaphoreController.release()
         #print("Subscriber LED " + ))
-        #self.changeState(data['power'])
-        #self.colorChange()
+        self.changeState(data['power'])
+        self.colorChange()
 
 """
 if __name__ == "__main__":

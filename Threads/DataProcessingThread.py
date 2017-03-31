@@ -1,6 +1,5 @@
 import threading, time
-#from LEDFeedback.ledModule import LedController
-from LEDFeedback.addressableLed import AddressableLedController
+from LEDFeedback.ledModule import LedController
 from EventDetector.eventDetection import EventDetection
 from Sending.sendingModule import DataSender
 from random import randint
@@ -30,7 +29,7 @@ class DataProcessingThread(threading.Thread):
             self.ledControl.changeState(data["power"])
             self.ledControl.colorChange()
             # first byte at 1 indicates, that we are sending the power, second indicates the power
-            self.ledControl.changePower(data["power"])
+            #self.ledControl.changePower(data["power"])
             '''power = randint(0,2000)
             print(power)
             self.ledControl.changePower(power)'''

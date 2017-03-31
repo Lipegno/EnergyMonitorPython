@@ -19,7 +19,7 @@ class EdisonControl(SocketControl):
             return True
 
     def initializeRelay(self):
-        self.relay.write(1)
+        self.relay.write(0)
 
     def calibrate(self):
         averageVoltage = 0
